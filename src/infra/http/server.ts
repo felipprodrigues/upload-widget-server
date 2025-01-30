@@ -1,4 +1,3 @@
-import { env } from '@/env'
 import { fastifyCors } from '@fastify/cors'
 import fastifyMultipart from '@fastify/multipart'
 import fastifySwagger from '@fastify/swagger'

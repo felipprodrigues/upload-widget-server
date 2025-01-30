@@ -1,10 +1,10 @@
-import { randomUUID } from 'node:crypto'
 import { pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { uuidv7 } from 'uuidv7'
 
-export const uplodas = pgTable('uploads', {
+export const uploads = pgTable('uploads', {
   id: text('id')
     .primaryKey()
-    .$defaultFn(() => randomUUID()),
+    .$defaultFn(() => uuidv7()),
   name: text('name').notNull(),
   // Representa o caminho para o sistema de storage
   remoteKey: text('remote_key').notNull().unique(),
