@@ -1,0 +1,32 @@
+# Drizzle Kit - Migrations e Studio
+
+Este projeto utiliza o [Drizzle Kit](https://github.com/Drizzle-Team/drizzle-kit) para gerenciar migrações e interagir com o banco de dados através de uma interface gráfica (UI).
+
+## Scripts no `package.json`
+
+O `package.json` contém alguns scripts para facilitar o uso do Drizzle Kit. Abaixo estão os detalhes de cada um deles:
+
+### 1. `db:generate`
+```bash
+"db:generate": "drizzle-kit generate"
+
+"Descrição": Este comando faz a leitura dos esquemas (schemas) definidos no seu projeto e gera os arquivos SQL necessários para a criação ou modificação das tabelas no banco de dados.
+"Uso": Utilize este comando para gerar as migrações quando houver mudanças nos esquemas de banco de dados.
+```
+
+### 2. `db:migrate`
+```bash
+"db:migrate": "drizzle-kit migrate"
+
+"Descrição": Este comando executa os arquivos SQL gerados pelo db:generate no banco de dados, aplicando as migrações e criando ou alterando as tabelas conforme necessário.
+"Uso": Execute este comando para aplicar as migrações no seu banco de dados.
+```
+
+### 3. `db:studio`
+```bash
+"db:studio": "drizzle-kit studio"
+
+"Descrição": Este comando inicia a interface gráfica (UI) do Drizzle Kit, permitindo que você interaja visualmente com o seu banco de dados. A UI facilita a visualização e edição das tabelas, registros e outros aspectos do banco de dados.
+"Uso": Execute este comando para abrir a UI do Drizzle e gerenciar seu banco de dados de forma visual.
+```
+
