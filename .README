@@ -1,4 +1,5 @@
 # Drizzle Kit - Migrations e Studio
+(Configurações do Drizzle ORM)
 
 Este projeto utiliza o [Drizzle Kit](https://github.com/Drizzle-Team/drizzle-kit) para gerenciar migrações e interagir com o banco de dados através de uma interface gráfica (UI).
 
@@ -30,3 +31,39 @@ O `package.json` contém alguns scripts para facilitar o uso do Drizzle Kit. Aba
 "Uso": Execute este comando para abrir a UI do Drizzle e gerenciar seu banco de dados de forma visual.
 ```
 
+-------
+
+# transform-swagger-schema.ts
+(Rota: Upload de imagem)
+### "Descrição":
+
+A função `transformSwaggerSchema` altera a formatação de `application/json` do requestBody para multipart/form-data para que arquivos possam ser enviados na requisicao.
+
+A rota upload-images.ts também necessita de alterações, tendo em vista que no `schema` da rota nao utilizamos `body` mais e consumimos o formato `multipart/form-data` para que arquivos possam ser usados no momento da requisição FE -> BE. No retorno da da rota, definimos alguns parametros que formatam a dimensão do arquivo:
+  ```
+  const uploadedFile = await request.file({
+      limits: {
+        fileSize: 1024 * 1024 * 2, // 2mb
+      },
+    })
+  ```
+
+### toBuffer vs streams:
+(upload-image.ts)
+
+
+O método `toBuffer()` carrega todos os dados do arquivo, guardando a representação desse arquivo em memória. Em suma, quando fazemos o armazenamento do arquivo com esse método, devemos considerar a dimensão e escalabilidade do projeto, vide que o processamento integral dos dados do arquivo podem criar um gargalo em performance.
+Ex: Se 10000 pessoa fazem upload de uma unica imagem de 2mb de tamanho ao mesmo tempo, teriamos 20gb de memória ram necessária somente para armazenar esses arquivos.
+```
+const file = await uploadFile.toBuffer()
+```
+
+Quando o FE faz a requisicao para o BE, enquanto o FE envia a requisicao, o BE começa a processar essa imagem enviando ela também para um serviço terceiro como cloudFlare, aws3, ou seja, guardamos em memória apenas pequenos pedaços da imagem que serão carregados para dentro dos serviços.
+A tipagem do arquivo como `['multipart/form-data']` sugere que a leitura dos dados é feita em pequenos pedaços, diferentemente de `application/json`.
+```
+  await uploadImage({
+    fileName: uploadedFile.filename,
+    contentType: uploadedFile.mimetype,
+    contentStream: uploadedFile.file,
+  })
+```
