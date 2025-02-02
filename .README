@@ -67,3 +67,53 @@ A tipagem do arquivo como `['multipart/form-data']` sugere que a leitura dos dad
     contentStream: uploadedFile.file,
   })
 ```
+
+### Shared/Either.ts
+#### Functional Error Handling
+
+Quando tratamos erros, normalmente usamos o bloco `try&catch`, porém por node nao ser uma linguagem funcional, o tratamento de errors em questão deixa a desejar quando é necessário maior definição nas tratativas.
+Em linguagens como Go/Elixir, por exemplo, cada função assíncrona retorna dois possiveis valores, `[error, result]`.
+
+Para termos o mesmo padrão na aplicação, podemos usar as utility functions documentadas no arquivo `either.ts`, onde temos `left` e `right`, onde o primeiro é erro e o segundo é sucesso.
+
+Na funcão de upload-image (src/app/functions/upload-image.ts), declaramos o retorno dela como:
+```
+Promise<Either<InvalidFileFormat, { url: string }>>
+```
+Sendo o retorno de error (InvalidFileFormat) ou o retorno de sucesso dela como { url: string }, utilizando as utility functions `makeLeft (error)` e `makeRight (success)`
+
+Na rota de upload-image (src/infra/http/routes/upload-image.ts) utilizamos as utility functions `unwrapEither` e `isRight` para definir corretamente o retorno da rota.
+
+`isRight` é declarado inicialmente e, caso os valores atinjam essa condição, retornaremos a resposta com o status 201. Se o valor for erro, então a condição isRight será pulada e caíremos na tratativa de error com `unwrapEither`, onde o resultado já é erro e as utility functions terão tipado corretamente os valores.
+
+```
+  async (request, reply) => {
+    const uploadedFile = await request.file({
+      limits: {
+        fileSize: 1024 * 1024 * 2, // 2mb
+      },
+    })
+
+    if (!uploadedFile) {
+      return reply.status(400).send({ message: 'File is required.' })
+    }
+
+    const result = await uploadImage({
+      fileName: uploadedFile.filename,
+      contentType: uploadedFile.mimetype,
+      contentStream: uploadedFile.file,
+    })
+
+    // Success
+    if (isRight(result)) {
+      return reply.status(201).send()
+    }
+
+    // Error
+    const error = unwrapEither(result)
+    switch (error.constructor.name) {
+      case 'InvalidFileFormat':
+        return reply.status(400).send({ message: error.message })
+    }
+  }
+```
