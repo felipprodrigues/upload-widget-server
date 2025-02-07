@@ -23,9 +23,6 @@ export async function uploadImage(
 ): Promise<Either<InvalidFileFormat, { url: string }>> {
   const { contentStream, contentType, fileName } = uploadImageInput.parse(input)
 
-  console.log(contentType, 'contenttype')
-  console.log(contentStream, 'stream')
-
   if (!allowedMimeTypes.includes(contentType)) {
     // makeLeft retorna error
     return makeLeft(new InvalidFileFormat())
