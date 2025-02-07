@@ -117,3 +117,38 @@ Na rota de upload-image (src/infra/http/routes/upload-image.ts) utilizamos as ut
     }
   }
 ```
+
+### Validando tamanho do arquivo
+
+Quando lidamos com streams e nao sabemos o tamanho final do arquivo, nós consumimos o arquivo em chunks e, caso o tamanho máximo é atingido antes mesmo de completar, retornamos o erro.
+
+O retorno do erro deve acontecer depois do inicio de upload, porque nao calculamos o file size, apenas permitimos que o upload aconteca em chunks.
+
+```
+  1. Definimos o fileSize máximo
+  const uploadedFile = await request.file({
+    limits: {
+      fileSize: 1024 * 1024 * 2, // 2mb
+    },
+  })
+
+  if (!uploadedFile) {
+    return reply.status(400).send({ message: 'File is required.' })
+  }
+
+  // 2. Inicializa o upload do arquivo
+  const result = await uploadImage({
+    fileName: uploadedFile.filename,
+    contentType: uploadedFile.mimetype,
+    contentStream: uploadedFile.file,
+  })
+
+  // 3. Se o arquivo for maior que 2mb, retornamos essa msg
+  // e o bucket do cloudFlare interromperá e apagará o arquivo
+  // em 7 dias (configuracao opcional)
+  if (uploadedFile.file.truncated) {
+    return reply.status(400).send({
+      message: 'File size limit reached.',
+    })
+  }
+```

@@ -40,6 +40,15 @@ export const uploadImageRoute: FastifyPluginAsyncZod = async server => {
         contentStream: uploadedFile.file,
       })
 
+      // Se o arquivo for maior que 2mb, retornamos essa msg
+      //  e o bucket do cloudFlare interromperá e apagará o arquivo
+      // em 7 dias (configuracao opcional)
+      if (uploadedFile.file.truncated) {
+        return reply.status(400).send({
+          message: 'File size limit reached.',
+        })
+      }
+
       // Success
       if (isRight(result)) {
         console.log(unwrapEither(result))
