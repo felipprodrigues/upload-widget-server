@@ -28,7 +28,7 @@ export async function uploadImage(
     return makeLeft(new InvalidFileFormat())
   }
 
-  // TODO: Carregar para o Cloud Flare R2
+  // DB do CloudFlare R2
   const { key, url } = await uploadFileToStorage({
     folder: 'images',
     fileName,
