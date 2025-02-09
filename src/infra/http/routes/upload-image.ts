@@ -14,6 +14,7 @@ export const uploadImageRoute: FastifyPluginAsyncZod = async server => {
     {
       schema: {
         summary: 'Upload an image',
+        tags: ['uploads'],
         // fazer com que a rota receba o formato de file
         // See: transform-swagger-schema.ts
         consumes: ['multipart/form-data'],
