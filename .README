@@ -152,3 +152,34 @@ O retorno do erro deve acontecer depois do inicio de upload, porque nao calculam
     })
   }
 ```
+
+### Cursores do Postgres
+O cursor do postgres retorna dados em chunks até finalizar a operação, assim como é uma stream dentro do node
+
+- Drizzle não tem suporte a cursores, logo não é possível usar drizzleORM para tal.
+
+```
+const cursor = pg.unsafe()
+```
+
+O método unsafe permite escrever uma query diretamente no sql (sql injection) (`pg.unsafe('SELECT * FROM uploads')`), porém ao invés de fazê-la diretamente com a declaração da query, podemos usar a query gerada pelo drizzle que já faz a sanitização dessa query.
+
+Ao invés de declararmos a função com await, podemos adicionar ao final da query o método `.toSQL()`, que retornará o sql e os parametros enviados.
+
+```
+const { sql, params } = db
+    .select({
+      id: schema.uploads.id,
+      name: schema.uploads.name,
+      remoteUrl: schema.uploads.remoteUrl,
+      createdAt: schema.uploads.createdAt,
+    })
+    .from(schema.uploads)
+    .where(
+      searchQuery ? ilike(schema.uploads.name, `%${searchQuery}%`) : undefined
+    ).toSQL()
+
+    const cursor = pg.unsafe(sql, params as string[]).cursor(50)
+```
+
+Passamos os valores da query do Drizzle como parâmetros do cursor e usamos o método `cursor()` para que os dados sejam retornados em batches. Nesse caso usamos o valor `cursor(50)`, para que sejam streamlined 50 itens por batch. Esse valor pode ser removido ou alterado, a depender da performance.
