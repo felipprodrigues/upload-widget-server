@@ -183,3 +183,72 @@ const { sql, params } = db
 ```
 
 Passamos os valores da query do Drizzle como parâmetros do cursor e usamos o método `cursor()` para que os dados sejam retornados em batches. Nesse caso usamos o valor `cursor(50)`, para que sejam streamlined 50 itens por batch. Esse valor pode ser removido ou alterado, a depender da performance.
+
+### Config CI
+
+1. Executa todas as vezes que PR são abertas:
+```
+name: E2E Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, reopened, labeled, unlabeled, synchronize]
+```
+
+2. Executamos dentro do ubuntu
+` runs-on: ubuntu-latest `
+
+3. Dependencias para rodar os testes, simulamos o docker-compose com:
+```
+services:
+  postgres:
+    image: postgres:13
+    ports:
+      - 5432:5432
+    env:
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
+      POSTGRES_DB: upload_test
+    options: >-
+      --health-cmd pg_isready
+      --health-interval 10s
+      --health-timeout 5s
+      --health-retries 5
+```
+POSTGRES_DB: upload_test equivale ao valor da DATABASE_URL declarada em .env.test
+
+4. Steps:
+Baixa o código:
+```
+ - uses: actions/checkout@v4
+```
+
+5. Faz o setup do pnpm:
+```
+- uses: pnpm/action-setup@v4
+  name: Install pnpm
+  with:
+    version: 9
+    run_install: false
+```
+
+6. Configura o cache
+```
+- name: Install Node.js
+  uses: actions/setup-node@v4
+  with:
+    node-version: 20
+    cache: "pnpm"
+```
+
+7. Instala pnpm sem alterar o arquivo .lock
+```
+- run: pnpm install --frozen-lockfile
+```
+
+8. Roda os testes
+```
+- run: pnpm run test
+```
