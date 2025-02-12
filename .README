@@ -197,7 +197,7 @@ on:
     types: [opened, reopened, labeled, unlabeled, synchronize]
 ```
 
-2. Executamos dentro do ubuntu
+2. Executamos dentro do ubuntu:
 ` runs-on: ubuntu-latest `
 
 3. Dependencias para rodar os testes, simulamos o docker-compose com:
@@ -234,7 +234,7 @@ Baixa o código:
     run_install: false
 ```
 
-6. Configura o cache
+6. Configura o cache:
 ```
 - name: Install Node.js
   uses: actions/setup-node@v4
@@ -243,12 +243,12 @@ Baixa o código:
     cache: "pnpm"
 ```
 
-7. Instala pnpm sem alterar o arquivo .lock
+7. Instala pnpm sem alterar o arquivo .lock:
 ```
 - run: pnpm install --frozen-lockfile
 ```
 
-8. Roda os testes
+8. Roda os testes:
 ```
 - run: pnpm run test
 ```
