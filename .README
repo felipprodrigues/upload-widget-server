@@ -32,40 +32,6 @@ O `package.json` contém alguns scripts para facilitar o uso do Drizzle Kit. Aba
 ```
 
 -------
-# Estratégias de ID únicos
-
-Existem formas de termos IDs no banco de dados
-
-### ID auto increment
-  PROS:
-    - Nunca vai se repetir
-    - Ordenável - Ajuda a lidar com problemas de performance.
-    - Pequeno
-
-### Paginacao em offset:
-- Limit e offset.
-  - O porem do limit e offset é que a paginação percorrerá todos os registros até chegar no offset desejado, ou seja, se o offset é 10, ele percorrerá ainda os 10 registros iniciais para então iniciar do ponto 10.
-
-### Paginação em cursores:
-  - Auto increment ordenável fará a busca do ID daquele limit e então buscará no db o ID para incrementar e fazer a captura dos dados desejados partindo daquele ID específico. Vide exemplo abaixo, onde o limite é 5, então a busca pulará os 5 primeiros registros (caixa vermelha) e ocorrerá no ID seguinte acima de 5, sendo ele o 6 (caixa roxa). Em paginação, essa ordenação acaba sendo mais performática qndo se trata de muitas páginas e registros.
-
-![alt text](<Screenshot 2025-01-30 at 8.10.49 AM.png>)
-Em aplicações com muitos dados, é recomendável que utilizemos um ID que seja ordenável.
-
-CONS:
-- Nao publico
-```
-http://minhaapi.com/usuarios/1
-```
-Nesse caso, não pode ser usado como publico porque se o usuário quiser, pode chutar IDs sequenciais ao atual e encontrar dados sensíveis de outros usuários ou da aplicação em si.
-
-ID - UUID
-- Público
-	O UUID é publico porém nao é ordernável
-- Nao ordenável (somente a partir do v7 - ainda nao suportado pelo nodejs)
-- Grande - ocupa muitos mais dados do que o auto increment
-
-
 
 # transform-swagger-schema.ts
 (Rota: Upload de imagem)
