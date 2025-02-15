@@ -30,7 +30,6 @@ O `package.json` contém alguns scripts para facilitar o uso do Drizzle Kit. Aba
 "Descrição": Este comando inicia a interface gráfica (UI) do Drizzle Kit, permitindo que você interaja visualmente com o seu banco de dados. A UI facilita a visualização e edição das tabelas, registros e outros aspectos do banco de dados.
 "Uso": Execute este comando para abrir a UI do Drizzle e gerenciar seu banco de dados de forma visual.
 ```
-
 -------
 # Estratégias de ID únicos
 
@@ -65,8 +64,7 @@ ID - UUID
 - Nao ordenável (somente a partir do v7 - ainda nao suportado pelo nodejs)
 - Grande - ocupa muitos mais dados do que o auto increment
 
-
-
+------
 # transform-swagger-schema.ts
 (Rota: Upload de imagem)
 ### "Descrição":
