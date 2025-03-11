@@ -19,7 +19,7 @@ export const uploadImageRoute: FastifyPluginAsyncZod = async server => {
         // See: transform-swagger-schema.ts
         consumes: ['multipart/form-data'],
         response: {
-          201: z.null().describe('Image upload.'),
+          201: z.object({ url: z.string() }).describe('Image upload.'),
           400: z.object({ message: z.string() }),
         },
       },
@@ -52,9 +52,9 @@ export const uploadImageRoute: FastifyPluginAsyncZod = async server => {
 
       // Success
       if (isRight(result)) {
-        console.log(unwrapEither(result))
+        const { url } = unwrapEither(result)
 
-        return reply.status(201).send()
+        return reply.status(201).send({ url })
       }
 
       // Error
