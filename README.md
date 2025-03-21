@@ -1,5 +1,8 @@
 # Upload Widget Server
 
+## Description
+The server handles image uploads using Node.js, PostgreSQL, and Cloudflare R2. It provides routes for uploading, listing, and exporting files in CSV format, leveraging PostgreSQL cursors and Node.js streams for efficient data handling. The system includes validation, error management, testing, and CI workflows to ensure reliability and scalability.
+
 ## Overview
 This project is a web application that runs using `pnpm` as a package manager and can be containerized using Docker. It includes Fastify for handling HTTP requests and Drizzle ORM for database management.
 
